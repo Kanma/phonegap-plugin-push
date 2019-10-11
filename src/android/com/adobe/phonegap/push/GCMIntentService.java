@@ -199,7 +199,7 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
         while (it.hasNext()) {
             String key = it.next();
 
-            Log.d(LOG_TAG, "key = " + key);
+            Log.d(LOG_TAG, "key = " + key + ", value = " + extras.getString(key));
 
             // If normalizeKeythe key is "data" or "message" and the value is a json object extract
             // This is to support parse.com and other services. Issue #147 and pull #218

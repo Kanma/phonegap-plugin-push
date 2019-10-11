@@ -1,9 +1,11 @@
 package com.adobe.phonegap.push;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Build;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmPubSub;
@@ -54,6 +56,9 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
         if (INITIALIZE.equals(action)) {
             cordova.getThreadPool().execute(new Runnable() {
                 public void run() {
+
+                    createNotificationChannel();
+
                     pushContext = callbackContext;
                     JSONObject jo = null;
 
@@ -454,5 +459,20 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
 
     protected static void setRegistrationID(String token) {
         registration_id = token;
+    }
+
+    public void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("Default", "Default", importance);
+            channel.setDescription("Default notification channel for the app");
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager =
+                (NotificationManager) cordova.getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }
